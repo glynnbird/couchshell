@@ -1,6 +1,24 @@
 # couchshell
 
-Couchshell is a command-line shell utility that allows you to interact with a CouchDB/Cloudant interface as if it were a file system.
+```
+   _____                 _      _____ _          _ _ 
+  / ____|               | |    / ____| |        | | |
+ | |     ___  _   _  ___| |__ | (___ | |__   ___| | |
+ | |    / _ \| | | |/ __| '_ \ \\___ \| '_ \ / _ \ | |
+ | |___| (_) | |_| | (__| | | |____) | | | |  __/ | |
+  \\_____\\___/ \\__,_|\\___|_| |_|_____/|_| |_|\\___|_|_|
+                                                     
+```
+
+Couchshell is a command-line shell utility that allows you to interact with a CouchDB/Cloudant interface as if it were a Unix file system.
+
+* mkdir - create database
+* rmdir - remove database
+* cd - change database
+* ls/ll - list contents of database or list of databases
+* cat - show contents of document or datbase stats
+* echo - create document
+* rm - remove document
 
 ## Installation
 
@@ -131,7 +149,7 @@ We can remove documents with `rm`:
 
     testdb >> rm mydoc
     {"ok":true,"id":"mydoc","rev":"2-c1b6d2ae1a60056eac56f1f440b7b593"}
-    test >> 
+    testdb >> 
 
 or remove whole directories with `rmdir`:
 
