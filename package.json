@@ -1,0 +1,21 @@
+{
+  "name": "couchshell",
+  "version": "0.0.1",
+  "description": "A shell to interact with CouchDB as if it were a file system",
+  "dependencies": {
+    "cloudant": "^1.0.0-beta3",
+    "shell": "^0.3.2"
+  },
+  "repository": "https://github.com/glynnbird/couchshell.git",
+  "keywords": [
+    "CouchDB",
+    "shell",
+    "couch",
+    "command-line"
+  ],
+  "author": "Glynn Bird",
+  "license": "BSD",
+  "bin": {
+      "couchshell": "app.js"
+  }
+}
