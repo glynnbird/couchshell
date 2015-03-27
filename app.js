@@ -234,6 +234,27 @@ app.cmd('echo :json', 'Create a document with auto-generated id', function(req, 
   }
 });
 
+app.cmd('touch :id', 'Create a new empty document, or change an existing one', function(req, res, next) {
+  if (cloudantdb) { 
+    cloudantdb.get(req.params.id, function(err, data){
+      var doc = null;
+      if (err) {
+        doc = { _id: req.params.id };
+      } else {
+        doc = data;
+      }
+      cloudantdb.insert(doc, function(err, data) {
+        if(err){ res.red(formatErr(err)); res.prompt(); return  }
+        res.cyan(JSON.stringify(data) + '\n');
+        res.prompt();
+      });
+    });
+  } else {
+    res.red("You cannot do 'touch :id from the top level\n");
+    res.prompt();
+  }
+});
+
 // Event notification 
 app.on('quit', function(){
   app.client.quit();

@@ -143,6 +143,16 @@ or we can specify the id by piping to a 'file':
     {"ok":true,"id":"mydoc","rev":"1-debc5c8de13e1f36787fe391da8191a6"}
     testdb >>
   
+## Touching data
+
+You can create a new empty document, or 'touch' an existing one (load it and save it) by using `touch`:
+
+    test >> touch moo
+    {"ok":true,"id":"moo","rev":"1-967a00dff5e02add41819138abb3284d"}
+    test >> touch moo
+    {"ok":true,"id":"moo","rev":"2-7051cbe5c8faecd085a3fa619e6e6337"}
+    test >>
+    
 ## Deleting data
 
 We can remove documents with `rm`:
