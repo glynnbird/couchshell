@@ -19,6 +19,7 @@ Couchshell is a command-line shell utility that allows you to interact with a Co
 * cat - show contents of document or datbase stats
 * echo - create document
 * rm - remove document
+* cp - copy a document or database
 
 ## Installation
 
@@ -166,15 +167,27 @@ or remove whole directories with `rmdir`:
     >> rmdir test
     {"ok":true}
 
+## Copying a document
+
+When inside a directory (database), we can copy a document with:
+
+    testdb >> cp doc1 doc2
+    {"ok":true,"id":"doc2","rev":"1-fda016d0fc74921c9b324b7aff5cbbdb"}
+     
+If the destination document is already there, we will get an error:
+
+    testdb >> cp doc1 doc2
+    409: Document update conflict.
+
 ## Copying a database
 
-When at the top of the directory tree, you can replicate one database to another with the `cp` commnand
+When at the top of the directory tree, we can replicate one database to another with the `cp` commnand
 
     >> cp databasea databaseb
     Replication scheduled:
     {"ok":true,"id":"30990d73131ad3674d3d778dbb461d85","rev":"1-6bf28911ef8daa72ecc51762955e6f9a"}
 
-Replication happens asynchronously. You can check on its progress by using `cat` with the name of the target database:
+Replication happens asynchronously. We can check on its progress by using `cat` with the name of the target database:
 
     >> cat databaseb
     {"db_name":"crimea","doc_count":18500,"doc_del_count":0,"update_seq":18500,"purge_seq":0,"compact_running":false,"disk_size":12021880,"data_size":11890503,"instance_start_time":"1427978103035439","disk_format_version":6,"committed_update_seq":18500}

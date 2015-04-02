@@ -137,7 +137,7 @@ app.cmd('rm :id', 'Remove a document', function(req, res, next) {
   }
 });
 
-app.cmd('cp :sourceid :destinationid', 'Copy a document', function(req, res, next) {
+app.cmd('cp :sourceid :destinationid', 'Copy a document/database', function(req, res, next) {
   if (cloudantdb) { 
     cloudantdb.get(req.params.sourceid, function(err, data){
       if(err){ res.red(formatErr(err)); res.prompt(); return  }
