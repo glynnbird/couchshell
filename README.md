@@ -45,18 +45,18 @@ You now have access to your CouchDB server as if is a file system with databases
 
 ## Create database (directory)
 
-    mkdir mydb
+    >> mkdir mydb
   
 ## Change directory
 
 We can deal with a database by using the `cd` shell commmand:
 
-    cd mydb
+    >> cd mydb
     mydb >>
   
 Or return back to the home directory with
 
-    cd ..
+    >> cd ..
     >>  
 
 ## View the contents of a directory
@@ -166,7 +166,21 @@ or remove whole directories with `rmdir`:
     >> rmdir test
     {"ok":true}
 
+## Copying a database
+
+When at the top of the directory tree, you can replicate one database to another with the `cp` commnand
+
+    >> cp databasea databaseb
+    Replication scheduled:
+    {"ok":true,"id":"30990d73131ad3674d3d778dbb461d85","rev":"1-6bf28911ef8daa72ecc51762955e6f9a"}
+
+Replication happens asynchronously. You can check on its progress by using `cat` with the name of the target database:
+
+    >> cat databaseb
+    {"db_name":"crimea","doc_count":18500,"doc_del_count":0,"update_seq":18500,"purge_seq":0,"compact_running":false,"disk_size":12021880,"data_size":11890503,"instance_start_time":"1427978103035439","disk_format_version":6,"committed_update_seq":18500}
+    
+
 ## Todo
 
-* when inside a directory doing 'cat de<< tab >>' the the shell autocompleted the document name.
+* when inside a directory doing 'cat de<< tab >>' should autocomplete the document name.
 * force rmdir to require confirmation before deleting a database

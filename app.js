@@ -150,8 +150,22 @@ app.cmd('cp :sourceid :destinationid', 'Copy a document', function(req, res, nex
       });
     });
   } else {
-    res.red("You cannot do 'cp <sourceid> <destinationid>' from the top level\n");
-    res.prompt();
+    // when at the top level, trigger replication
+    var repl = { 
+                 source: process.env.COUCH_URL + "/" + encodeURIComponent(req.params.sourceid), 
+                 target: process.env.COUCH_URL + "/" + encodeURIComponent(req.params.destinationid), 
+                 create_target:true 
+                };
+    var r = { 
+              db: '_replicator',
+              body: repl,
+              method: 'post'
+            };
+    app.client.request(r, function(err, data) {
+      res.cyan("Replication scheduled:\n");
+      res.cyan(JSON.stringify(data) + '\n');
+      res.prompt();            
+    });
   }
 });
 
