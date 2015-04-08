@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 var shell = require('shell');
+var url = require('url');
 var cloudantdb = null;
 var cloudantdbname = null;
 
@@ -45,6 +46,18 @@ var formatDocs = function(docs, separator) {
   }
   return retval.join(separator) + "\n";
 }
+
+// convert a database name to a URL, if it isn't already
+var convertToURL = function(x) {
+  var parsed = url.parse(x);
+  // if it is a URL already
+  if (parsed.protocol) {
+    return parsed.href;
+  } else {
+    return process.env.COUCH_URL + "/" + encodeURIComponent(x);
+  }
+}
+
 // Command registration 
 app.cmd('ls', 'List dbs/documents', function(req, res, next){
   if (cloudantdb) {
@@ -153,8 +166,8 @@ app.cmd('cp :sourceid :destinationid', 'Copy a document/database', function(req,
   } else {
     // when at the top level, trigger replication
     var repl = { 
-                 source: process.env.COUCH_URL + "/" + encodeURIComponent(req.params.sourceid), 
-                 target: process.env.COUCH_URL + "/" + encodeURIComponent(req.params.destinationid), 
+                 source: convertToURL(req.params.sourceid), 
+                 target: convertToURL(req.params.destinationid), 
                  create_target:true 
                 };
     var r = { 

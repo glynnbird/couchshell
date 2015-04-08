@@ -193,6 +193,12 @@ Replication happens asynchronously. We can check on its progress by using `cat` 
     >> cat databaseb
     {"db_name":"crimea","doc_count":18500,"doc_del_count":0,"update_seq":18500,"purge_seq":0,"compact_running":false,"disk_size":12021880,"data_size":11890503,"instance_start_time":"1427978103035439","disk_format_version":6,"committed_update_seq":18500}
     
+We can even replicate to and from a remote URL:
+
+    >> cp databasea https://myusername:mypassword@myhost.cloudant.com/databaseb
+    Replication scheduled:
+    {"ok":true,"id":"30990d73131ad3674d3d778dbb461d85","rev":"1-6bf28911ef8daa72ecc51762955e6f9a"}
+    
 ## Showing first few documents from a database
 
 When at the top of the directory tree, we can output the first ten of a database's documents with `head`:
