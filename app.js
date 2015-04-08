@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 var shell = require('shell');
 var cloudantdb = null;
+var cloudantdbname = null;
 
 if(!process.env.COUCH_URL) {
   console.log("Please specify the URL of your CouchDB instance by setting a COUCH_URL environment variable");
@@ -197,12 +198,14 @@ app.cmd('rmdir :db', 'Remove a database', function(req,res, next) {
 
 app.cmd('cd ..', 'Return to home', function(req,res,next) {
   cloudantdb = null;
+  cloudantdbname = null;
   app.set('prompt', ">> ");
   res.prompt();
 });
 
 app.cmd('cd :db', function(req,res,next) {
   cloudantdb = app.client.use(req.params.db)
+  cloudantdbname = req.params.db;
   app.set('prompt', req.params.db + " >> ");
   res.prompt();
 });
@@ -265,6 +268,30 @@ app.cmd('touch :id', 'Create a new empty document, or change an existing one', f
     });
   } else {
     res.red("You cannot do 'touch :id from the top level\n");
+    res.prompt();
+  }
+});
+
+app.cmd('head :db', 'Show first ten documents from a database', function(req, res, next) {
+  if (cloudantdb) { 
+    res.red("You cannot do 'head :id from the top level\n");
+    res.prompt();
+  } else {
+    var d = app.client.db.use(req.params.db);
+    d.list({limit:10}, function(err, data) {
+      if(err){ res.red(formatErr(err)); res.prompt(); return  }
+      res.cyan(JSON.stringify(data.rows) + '\n');
+      res.prompt();
+    });
+  }
+});
+
+app.cmd('pwd', 'Print working directory', function(req, res, next) {
+  if (cloudantdb) { 
+    res.cyan(cloudantdbname + "\n");
+    res.prompt();
+  } else {
+    res.cyan("/ \n");
     res.prompt();
   }
 });

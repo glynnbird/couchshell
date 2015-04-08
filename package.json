@@ -1,6 +1,6 @@
 {
   "name": "couchshell",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "A shell to interact with CouchDB as if it were a file system",
   "dependencies": {
     "cloudant": "^1.0.0-beta3",

@@ -20,6 +20,7 @@ Couchshell is a command-line shell utility that allows you to interact with a Co
 * echo - create document
 * rm - remove document
 * cp - copy a document or database
+* head - show first few documents from a database
 
 ## Installation
 
@@ -192,6 +193,12 @@ Replication happens asynchronously. We can check on its progress by using `cat` 
     >> cat databaseb
     {"db_name":"crimea","doc_count":18500,"doc_del_count":0,"update_seq":18500,"purge_seq":0,"compact_running":false,"disk_size":12021880,"data_size":11890503,"instance_start_time":"1427978103035439","disk_format_version":6,"committed_update_seq":18500}
     
+## Showing first few documents from a database
+
+When at the top of the directory tree, we can output the first ten of a database's documents with `head`:
+
+    >> head geoquiz
+    [{"id":"_design/fetch","key":"_design/fetch","value":{"rev":"1-a15cb9ce7b3a4466eb369f882fb0b717"}},{"id":"afghanistan","key":"afghanistan","value":{"rev":"1-9558a91d8b99d812baead834644dbb20"}},{"id":"alabama","key":"alabama","value":{"rev":"1-dda5ed5297b54d709d5946e1ca64f30a"}},{"id":"alaska","key":"alaska","value":{"rev":"1-aaac41905347745378f8b53d4cb4c407"}},{"id":"albania","key":"albania","value":{"rev":"1-594d450b3d155ca7a30e8fb097f4cba7"}},{"id":"algeria","key":"algeria","value":{"rev":"1-1a3a846e82373946eb4ef6066993441a"}},{"id":"angola","key":"angola","value":{"rev":"1-251dc285ef7c60330041350fae377047"}},{"id":"antarctica","key":"antarctica","value":{"rev":"1-eb7b0d1b313034977a266bda6bf3eb54"}},{"id":"argentina","key":"argentina","value":{"rev":"1-7c562dcca2e94e922ecf22e200adad0b"}},{"id":"arizona","key":"arizona","value":{"rev":"1-c02750010054f7ff3a0aa420747ef3c7"}}]
 
 ## Todo
 
