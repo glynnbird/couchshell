@@ -204,10 +204,13 @@ app.cmd('cd ..', 'Return to home', function(req,res,next) {
 });
 
 app.cmd('cd :db', function(req,res,next) {
-  cloudantdb = app.client.use(req.params.db)
-  cloudantdbname = req.params.db;
-  app.set('prompt', req.params.db + " >> ");
-  res.prompt();
+  app.client.db.get(req.params.db, function(err,data) {
+    if(err){ res.red("Database does not exist\n"); res.prompt(); return; }
+    cloudantdb = app.client.use(req.params.db)
+    cloudantdbname = req.params.db;
+    app.set('prompt', req.params.db + " >> ");
+    res.prompt();
+  });
 });
 
 app.cmd('echo :json > :id', 'Create a document', function(req, res, next) {
@@ -278,7 +281,7 @@ app.cmd('head :db', 'Show first ten documents from a database', function(req, re
     res.prompt();
   } else {
     var d = app.client.db.use(req.params.db);
-    d.list({limit:10}, function(err, data) {
+    d.list({limit:10, include_docs:true}, function(err, data) {
       if(err){ res.red(formatErr(err)); res.prompt(); return  }
       res.cyan(JSON.stringify(data.rows) + '\n');
       res.prompt();
