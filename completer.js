@@ -65,8 +65,6 @@ module.exports = function(settings) {
           if(suggestions.length==1) {
             bits.push(suggestions[0]);
             text = bits.join(" ");
-            suggestions=true;
-         //   console.log(text);
           }
           cb(false, [ suggestions, text]);
         });
