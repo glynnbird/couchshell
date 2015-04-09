@@ -1,8 +1,11 @@
 #!/usr/bin/env node
 var shell = require('shell');
 var url = require('url');
-var cloudantdb = null;
-var cloudantdbname = null;
+var appsettings = { 
+  cloudantdb: null,
+  cloudantdbname: null
+};
+var completer = require('./completer.js');
 
 if(!process.env.COUCH_URL) {
   console.log("Please specify the URL of your CouchDB instance by setting a COUCH_URL environment variable");
@@ -15,14 +18,14 @@ var app = new shell( { chdir: __dirname } )
 app.configure(function() {
   app.use(function(req, res, next){ 
     app.client = require('cloudant')(process.env.COUCH_URL);
-    app.db = null;
     next()
   });
   app.use(shell.history({
     shell: app
   }));
-  app.use(shell.completer({
-    shell: app
+  app.use(completer({
+    shell: app,
+    appsettings: appsettings
   }));
   app.use(shell.router({
     shell: app
@@ -60,8 +63,8 @@ var convertToURL = function(x) {
 
 // Command registration 
 app.cmd('ls', 'List dbs/documents', function(req, res, next){
-  if (cloudantdb) {
-    cloudantdb.list( { limit: 10 }, function(err, data){
+  if (appsettings.cloudantdb) {
+    appsettings.cloudantdb.list( { limit: 10 }, function(err, data){
       if(err){ res.cyan(formatErr(err)); res.prompt(); return  }
       res.cyan(formatDocs(data.rows, ' ')||'no documents');
       res.prompt();
@@ -77,14 +80,14 @@ app.cmd('ls', 'List dbs/documents', function(req, res, next){
 
 // Command registration 
 app.cmd('ll', 'List databases', function(req, res, next){
-  if (cloudantdb) {
-    cloudantdb.list( { limit: 10 }, function(err, data){
+  if (appsettings.cloudantdb) {
+    appsettings.cloudantdb.list( { limit: 10 }, function(err, data){
       if(err){ res.red(formatErr(err)); res.prompt(); return  }
       res.cyan(formatDocs(data.rows,'\n')||'no documents');
       res.prompt();
     });
   } else {
-    app.client.db.list( function(err, data){
+    app.client.db.list( {limit: 100}, function(err, data){
       if(err){ res.red(formatErr(err)); res.prompt(); return }
       res.cyan(data.join('\n')||'no databases');
       res.prompt();
@@ -94,8 +97,8 @@ app.cmd('ll', 'List databases', function(req, res, next){
 
 // Command registration 
 app.cmd('cat :id', 'Print database summary or document contents', function(req, res, next){
-  if (cloudantdb) {
-    cloudantdb.get(req.params.id, function(err, data){
+  if (appsettings.cloudantdb) {
+    appsettings.cloudantdb.get(req.params.id, function(err, data){
       if(err){ res.red(formatErr(err)); res.prompt(); return  }
       res.cyan(JSON.stringify(data) + '\n');
       res.prompt();
@@ -110,8 +113,8 @@ app.cmd('cat :id', 'Print database summary or document contents', function(req, 
 });
 
 app.cmd('ls :key', function(req, res, next) {
-  if (cloudantdb) { 
-    cloudantdb.list( { limit: 10, startkey:req.params.key, endkey:req.params.key+'z'}, function(err, data){
+  if (appsettings.cloudantdb) { 
+    appsettings.cloudantdb.list( { limit: 10, startkey:req.params.key, endkey:req.params.key+'z'}, function(err, data){
       if(err){ res.red(formatErr(err)); res.prompt(); return  }
       res.cyan(formatDocs(data.rows,' ')||'no documents');
       res.prompt();
@@ -123,8 +126,8 @@ app.cmd('ls :key', function(req, res, next) {
 });
 
 app.cmd('ll :key', function(req, res, next) {
-  if (cloudantdb) { 
-    cloudantdb.list( { limit: 10, startkey:req.params.key, endkey:req.params.key+'z'}, function(err, data){
+  if (appsettings.cloudantdb) { 
+    appsettings.cloudantdb.list( { limit: 10, startkey:req.params.key, endkey:req.params.key+'z'}, function(err, data){
       if(err){ res.red(formatErr(err)); res.prompt(); return  }
       res.cyan(formatDocs(data.rows,'\n')||'no documents');
       res.prompt();
@@ -136,10 +139,10 @@ app.cmd('ll :key', function(req, res, next) {
 });
 
 app.cmd('rm :id', 'Remove a document', function(req, res, next) {
-  if (cloudantdb) { 
-    cloudantdb.get(req.params.id, function(err, data){
+  if (appsettings.cloudantdb) { 
+    appsettings.cloudantdb.get(req.params.id, function(err, data){
       if(err){ res.red(formatErr(err)); res.prompt(); return  }
-      cloudantdb.destroy(data._id, data._rev, function(err, data) {
+      appsettings.cloudantdb.destroy(data._id, data._rev, function(err, data) {
         if(err){ res.red(formatErr(err)); res.prompt(); return  }
         res.cyan(JSON.stringify(data) + '\n');
         res.prompt();
@@ -152,12 +155,12 @@ app.cmd('rm :id', 'Remove a document', function(req, res, next) {
 });
 
 app.cmd('cp :sourceid :destinationid', 'Copy a document/database', function(req, res, next) {
-  if (cloudantdb) { 
-    cloudantdb.get(req.params.sourceid, function(err, data){
+  if (appsettings.cloudantdb) { 
+    appsettings.cloudantdb.get(req.params.sourceid, function(err, data){
       if(err){ res.red(formatErr(err)); res.prompt(); return  }
       data._id = req.params.destinationid;
       delete data._rev;
-      cloudantdb.insert(data, function(err, data) {
+      appsettings.cloudantdb.insert(data, function(err, data) {
         if(err){ res.red(formatErr(err)); res.prompt(); return  }
         res.cyan(JSON.stringify(data) + '\n');
         res.prompt();
@@ -184,7 +187,7 @@ app.cmd('cp :sourceid :destinationid', 'Copy a document/database', function(req,
 });
 
 app.cmd('mkdir :db', 'Create database', function(req,res, next) {
-  if (cloudantdb) { 
+  if (appsettings.cloudantdb) { 
     res.red("You cannot create a database inside a database!\n"); 
     res.prompt();   
   } else {
@@ -197,7 +200,7 @@ app.cmd('mkdir :db', 'Create database', function(req,res, next) {
 });
 
 app.cmd('rmdir :db', 'Remove a database', function(req,res, next) {
-  if (cloudantdb) { 
+  if (appsettings.cloudantdb) { 
     res.red("You cannot remove a database from here!\n"); 
     res.prompt();   
   } else {
@@ -210,8 +213,8 @@ app.cmd('rmdir :db', 'Remove a database', function(req,res, next) {
 });
 
 app.cmd('cd ..', 'Return to home', function(req,res,next) {
-  cloudantdb = null;
-  cloudantdbname = null;
+  appsettings.cloudantdb = null;
+  appsettings.cloudantdbname = null;
   app.set('prompt', ">> ");
   res.prompt();
 });
@@ -219,20 +222,20 @@ app.cmd('cd ..', 'Return to home', function(req,res,next) {
 app.cmd('cd :db', function(req,res,next) {
   app.client.db.get(req.params.db, function(err,data) {
     if(err){ res.red("Database does not exist\n"); res.prompt(); return; }
-    cloudantdb = app.client.use(req.params.db)
-    cloudantdbname = req.params.db;
+    appsettings.cloudantdb = app.client.use(req.params.db)
+    appsettings.cloudantdbname = req.params.db;
     app.set('prompt', req.params.db + " >> ");
     res.prompt();
   });
 });
 
 app.cmd('echo :json > :id', 'Create a document', function(req, res, next) {
-  if (cloudantdb) { 
+  if (appsettings.cloudantdb) { 
     try {
       var str  = req.params.json.replace(/^'/,"").replace(/'$/,"");
       var obj = JSON.parse(str);
       obj._id = req.params.id;
-      cloudantdb.insert(obj, function(err, data) {
+      appsettings.cloudantdb.insert(obj, function(err, data) {
         if(err){ res.red(formatErr(err)); res.prompt(); return  }
         res.cyan(JSON.stringify(data) + '\n');
         res.prompt();
@@ -248,11 +251,11 @@ app.cmd('echo :json > :id', 'Create a document', function(req, res, next) {
 });
 
 app.cmd('echo :json', 'Create a document with auto-generated id', function(req, res, next) {
-  if (cloudantdb) { 
+  if (appsettings.cloudantdb) { 
     try {
       var str  = req.params.json.replace(/^'/,"").replace(/'$/,"");
       var obj = JSON.parse(str);
-      cloudantdb.insert(obj, function(err, data) {
+      appsettings.cloudantdb.insert(obj, function(err, data) {
         if(err){ res.red(formatErr(err)); res.prompt(); return  }
         res.cyan(JSON.stringify(data) + '\n');
         res.prompt();
@@ -268,15 +271,15 @@ app.cmd('echo :json', 'Create a document with auto-generated id', function(req, 
 });
 
 app.cmd('touch :id', 'Create a new empty document, or change an existing one', function(req, res, next) {
-  if (cloudantdb) { 
-    cloudantdb.get(req.params.id, function(err, data){
+  if (appsettings.cloudantdb) { 
+    appsettings.cloudantdb.get(req.params.id, function(err, data){
       var doc = null;
       if (err) {
         doc = { _id: req.params.id };
       } else {
         doc = data;
       }
-      cloudantdb.insert(doc, function(err, data) {
+      appsettings.cloudantdb.insert(doc, function(err, data) {
         if(err){ res.red(formatErr(err)); res.prompt(); return  }
         res.cyan(JSON.stringify(data) + '\n');
         res.prompt();
@@ -289,7 +292,7 @@ app.cmd('touch :id', 'Create a new empty document, or change an existing one', f
 });
 
 app.cmd('head :db', 'Show first ten documents from a database', function(req, res, next) {
-  if (cloudantdb) { 
+  if (appsettings.cloudantdb) { 
     res.red("You cannot do 'head :id from the top level\n");
     res.prompt();
   } else {
@@ -303,8 +306,8 @@ app.cmd('head :db', 'Show first ten documents from a database', function(req, re
 });
 
 app.cmd('pwd', 'Print working directory', function(req, res, next) {
-  if (cloudantdb) { 
-    res.cyan(cloudantdbname + "\n");
+  if (appsettings.cloudantdb) { 
+    res.cyan(appsettings.cloudantdbname + "\n");
     res.prompt();
   } else {
     res.cyan("/ \n");
