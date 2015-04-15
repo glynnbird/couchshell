@@ -22,7 +22,9 @@ module.exports = (settings) ->
     cb(false, [suggestions, text])
   null
 */       
-    
+
+var longestCommonPrefix = require('./longest-common-prefix');
+
 module.exports = function(settings) {
   if (!settings.shell) {
     throw new Error("No shell provided");
@@ -52,25 +54,26 @@ module.exports = function(settings) {
       }
       cb(false, [suggestions, text])
     } else {
-      
       // if we are in a sub-directory, we want documentid auto-completion
       if (appsettings.cloudantdb) {
-        var startkey = bits.pop();
-        appsettings.cloudantdb.list( { limit: 10, startkey:startkey, endkey:startkey+'z'}, function(err, data){
-          // console.log("AC2", JSON.stringify(appsettings));
-          var suggestions = [];
-          for(var i in data.rows) {
-            suggestions.push(data.rows[i].id);
-          }
-          if(suggestions.length==1) {
-            bits.push(suggestions[0]);
-            text = bits.join(" ");
+        var startkey = bits[bits.length - 1] || '';
+        appsettings.cloudantdb.list( { limit: 10, startkey:startkey, endkey:startkey+'\uffff'}, function(err, data){
+          var suggestions = data.rows.map(function (row) {
+            return row.id;
+          });
+
+          if(suggestions.length) {
+            var prefix = longestCommonPrefix(suggestions).substring(startkey.length);
+
+            if (prefix.length) { // one common prefix, so complete it
+              suggestions = [text + prefix];
+            }
           }
           cb(false, [ suggestions, text]);
         });
 
       } else {
-        
+
         cb(false, [ [] , text]);
 
       }
