@@ -24,6 +24,18 @@ module.exports = (settings) ->
 */       
 
 var longestCommonPrefix = require('./longest-common-prefix');
+var nano = require('nano');
+
+function processSuggestions(suggestions, startkey, text, cb) {
+  if(suggestions.length) {
+    var prefix = longestCommonPrefix(suggestions).substring(startkey.length);
+
+    if (prefix.length) { // one common prefix, so complete it
+      suggestions = [text + prefix];
+    }
+  }
+  cb(false, [ suggestions, text]);
+}
 
 module.exports = function(settings) {
   if (!settings.shell) {
@@ -43,7 +55,7 @@ module.exports = function(settings) {
     var bits = text.split(" "); 
     
     // if we have no space, then we haven't finished typing the command - so we want command auto-completion
-    if (bits.length==1) {
+    if (bits.length == 1) {
       var suggestions = []
       var routes = shell.routes
       for (var i in routes) {
@@ -57,30 +69,28 @@ module.exports = function(settings) {
       // if we are in a sub-directory, we want documentid auto-completion
       if (appsettings.cloudantdb) {
         var startkey = bits[bits.length - 1] || '';
-        appsettings.cloudantdb.list( { limit: 10, startkey:startkey, endkey:startkey+'\uffff'}, function(err, data){
+        appsettings.cloudantdb.list( {
+          limit: 10,
+          startkey: startkey,
+          endkey: startkey + '\uffff'
+        }, function(err, data) {
           var suggestions = data.rows.map(function (row) {
             return row.id;
           });
-
-          if(suggestions.length) {
-            var prefix = longestCommonPrefix(suggestions).substring(startkey.length);
-
-            if (prefix.length) { // one common prefix, so complete it
-              suggestions = [text + prefix];
-            }
-          }
-          cb(false, [ suggestions, text]);
+          processSuggestions(suggestions, startkey, text, cb);
         });
-
       } else {
-
-        cb(false, [ [] , text]);
-
+        // database/documentid autocompletion
+        var startkey = bits[bits.length - 1] || '';
+        nano(process.env.COUCH_URL).relax({
+          db: '_all_dbs'
+        }, function(err, data) {
+          var suggestions = data.filter(function (db) {
+            return db.indexOf(startkey) === 0;
+          });
+          processSuggestions(suggestions, startkey, text, cb);
+        });
       }
-      // database/documentid autocompletion
-      
-      
-      
     }
 
   };
