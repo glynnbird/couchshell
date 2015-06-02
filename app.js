@@ -65,6 +65,7 @@ var convertToURL = function(x) {
 app.cmd('ls', 'List dbs/documents', function(req, res, next){
   if (appsettings.cloudantdb) {
     appsettings.cloudantdb.list( { limit: 10 }, function(err, data){
+      console.log(err,data);
       if(err){ res.cyan(formatErr(err)); res.prompt(); return  }
       res.cyan(formatDocs(data.rows, ' ')||'no documents');
       res.prompt();
@@ -87,7 +88,7 @@ app.cmd('ll', 'List databases', function(req, res, next){
       res.prompt();
     });
   } else {
-    app.client.db.list( {limit: 100}, function(err, data){
+    app.client.db.list(function(err, data){
       if(err){ res.red(formatErr(err)); res.prompt(); return }
       res.cyan(data.join('\n')||'no databases');
       res.prompt();

@@ -1,10 +1,9 @@
 {
   "name": "couchshell",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "A shell to interact with CouchDB as if it were a file system",
   "dependencies": {
-    "cloudant": "^1.0.0-beta3",
-    "nano": "^6.1.2",
+    "cloudant": "^1.0.0",
     "shell": "^0.3.2"
   },
   "repository": "https://github.com/glynnbird/couchshell.git",
