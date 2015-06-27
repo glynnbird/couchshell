@@ -6,6 +6,7 @@ var appsettings = {
   cloudantdbname: null
 };
 var completer = require('./completer.js');
+var asciitree = require('ascii-tree');
 
 if(!process.env.COUCH_URL) {
   console.log("Please specify the URL of your CouchDB instance by setting a COUCH_URL environment variable");
@@ -288,6 +289,60 @@ app.cmd('touch :id', 'Create a new empty document, or change an existing one', f
     });
   } else {
     res.red("You cannot do 'touch :id from the top level\n");
+    res.prompt();
+  }
+});
+
+app.cmd('tree :id', 'View the revision history of a document', function(req, res, next) {
+  if (appsettings.cloudantdb) { 
+    appsettings.cloudantdb.get(req.params.id, { conflicts:true, revs_info:true}, function(err, data){
+      if(err){ res.red(formatErr(err)); res.prompt(); return  }
+      var revs = [];
+      for(var i in data._revs_info) {
+        revs.push(data._revs_info[i].rev);
+       }
+      for(var i in data._conflicts) {
+        revs.push(data._conflicts[i]);
+      }
+      revs = revs.sort();
+      var revslist = { };
+      for(var i in revs) {
+        var match = revs[i].match(/^[0-9]+/);
+        if(match) {
+          var rev = match[0];
+          if(!revslist[rev]) {
+            revslist[rev] = [];
+          }
+          revslist[rev].push(revs[i]);
+        }
+      }
+      var output = "#id = " + req.params.id + "\n";
+      for(var i in revslist) {
+        var prefix = "##";
+        if (revslist[i].length==1) {
+           output += prefix + revslist[i][0];
+           if(revslist[i][0] == data._rev) {
+             output += " *"
+           }
+          output += "\n";
+        } else {
+          output += prefix + revslist[i][0].match(/^[0-9]+/)[0];
+          output += "\n";
+          prefix += "#";
+          for(var j in revslist[i]) {
+            output += prefix + revslist[i][j];
+            if(revslist[i][j] == data._rev) {
+              output  += " *"
+            }
+            output += "\n";
+          }
+        }
+      }
+      res.cyan(asciitree.generate(output) + '\n');
+      res.prompt();
+    });
+  } else {
+    res.red("You cannot do 'tree :id from the top level\n");
     res.prompt();
   }
 });

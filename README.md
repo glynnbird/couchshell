@@ -206,7 +206,50 @@ When at the top of the directory tree, we can output the first ten of a database
     >> head geoquiz
     [{"id":"_design/fetch","key":"_design/fetch","value":{"rev":"1-a15cb9ce7b3a4466eb369f882fb0b717"}},{"id":"afghanistan","key":"afghanistan","value":{"rev":"1-9558a91d8b99d812baead834644dbb20"}},{"id":"alabama","key":"alabama","value":{"rev":"1-dda5ed5297b54d709d5946e1ca64f30a"}},{"id":"alaska","key":"alaska","value":{"rev":"1-aaac41905347745378f8b53d4cb4c407"}},{"id":"albania","key":"albania","value":{"rev":"1-594d450b3d155ca7a30e8fb097f4cba7"}},{"id":"algeria","key":"algeria","value":{"rev":"1-1a3a846e82373946eb4ef6066993441a"}},{"id":"angola","key":"angola","value":{"rev":"1-251dc285ef7c60330041350fae377047"}},{"id":"antarctica","key":"antarctica","value":{"rev":"1-eb7b0d1b313034977a266bda6bf3eb54"}},{"id":"argentina","key":"argentina","value":{"rev":"1-7c562dcca2e94e922ecf22e200adad0b"}},{"id":"arizona","key":"arizona","value":{"rev":"1-c02750010054f7ff3a0aa420747ef3c7"}}]
 
+
+##  Showing the revision history of a document
+
+When inside a database (directory), you can see a visualisation of the revision history with `tree`:
+
+A document with only one revision  will simply show it's id and revision token:
+
+    testdb >> tree 87c8882011c89970bbe077ac67003479
+    id = 87c8882011c89970bbe077ac67003479
+    └─ 1-e14063a7ba34a22b100284ce731ad6ac *
+
+A document with many conflicts on revision 1 will look like this:
+
+    testdb >> tree 87c8882011c89970bbe077ac67003479
+    id = 87c8882011c89970bbe077ac67003479
+    └─ 1
+       ├─ 1-100785dab5598961c8588790a810d37c
+       ├─ 1-1234cfba23d341a6d3916372a782fd65
+       ├─ 1-16d159e554c289d5848a3ca8854f9807
+       ├─ 1-1f10158068c458605d02ed0199ccd23b
+       ├─ 1-45b83b90c5112878ad1a961b3e7ccaee
+       ├─ 1-5e52a4558f111a53afe6ef72ee831af8
+       ├─ 1-6a74408eb56ad564c1d461c97e3c47dc
+       ├─ 1-6f49e763289e848f1650a94043a1e792
+       ├─ 1-93b0bd6be8d346e28f95584a972c4e24
+       └─ 1-94ec1c1571a5b00a5f0bf4121af1ddef *
+       
+And a more complicated revision history may look like this:
+
+    testdb >> tree 87c8882011c89970bbe077ac67003479
+    id = 87c8882011c89970bbe077ac67003479
+    ├─ 1-46d69249075d3c7edebff00bb1eab65e
+    ├─ 2-cc0b8b79af66fba84a8443484bff5160
+    ├─ 3-52d91622d40f174894c567cc1fcee2e3
+    ├─ 4
+    │  ├─ 4-5c58ab6c4a15f5b8b880994fa52dfa68
+    │  └─ 4-8171912e80397748fbde74cc09d42c6e
+    ├─ 5-edec47733ea830362a5913b7f6312fe6
+    └─ 6
+       ├─ 6-5f24a47d9c6cbd78261830ef179aebfd
+       └─ 6-f564b9850dca8e61019aeabdd5480f3f *
+   
+The winning revision is marked with an asterisk.
+
 ## Todo
 
-* when inside a directory doing 'cat de<< tab >>' should autocomplete the document name.
 * force rmdir to require confirmation before deleting a database

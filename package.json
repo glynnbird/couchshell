@@ -1,8 +1,9 @@
 {
   "name": "couchshell",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "description": "A shell to interact with CouchDB as if it were a file system",
   "dependencies": {
+    "ascii-tree": "^0.2.0",
     "cloudant": "^1.0.0",
     "shell": "^0.3.2"
   },
