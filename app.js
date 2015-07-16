@@ -39,7 +39,7 @@ app.configure(function() {
 
 
 var formatErr = function(err) {
-  var retval = err.status_code + ": "+ err.description + "\n";
+  var retval = err.status_code + ": "+ err.description + '\n';
   return retval;
 }
 
@@ -48,7 +48,7 @@ var formatDocs = function(docs, separator) {
   for (var i in docs) {
     retval.push(docs[i].id);
   }
-  return retval.join(separator) + "\n";
+  return retval.join(separator) + '\n';
 }
 
 // convert a database name to a URL, if it isn't already
@@ -68,13 +68,13 @@ app.cmd('ls', 'List dbs/documents', function(req, res, next){
     appsettings.cloudantdb.list( { limit: 10 }, function(err, data){
       console.log(err,data);
       if(err){ res.cyan(formatErr(err)); res.prompt(); return  }
-      res.cyan(formatDocs(data.rows, ' ')||'no documents');
+      res.cyan(formatDocs(data.rows, ' ')+'\n'||'no documents');
       res.prompt();
     });
   } else {
     app.client.db.list( function(err, data){
       if(err){ res.cyan(formatErr(err)); res.prompt(); return }
-      res.cyan(data.join(' ')||'no databases');
+      res.cyan(data.join(' ')+'\n'||'no databases');
       res.prompt();
     });
   }
@@ -91,7 +91,7 @@ app.cmd('ll', 'List databases', function(req, res, next){
   } else {
     app.client.db.list(function(err, data){
       if(err){ res.red(formatErr(err)); res.prompt(); return }
-      res.cyan(data.join('\n')||'no databases');
+      res.cyan(data.join('\n')+'\n'||'no databases');
       res.prompt();
     });
   }
@@ -118,7 +118,7 @@ app.cmd('ls :key', function(req, res, next) {
   if (appsettings.cloudantdb) { 
     appsettings.cloudantdb.list( { limit: 10, startkey:req.params.key, endkey:req.params.key+'z'}, function(err, data){
       if(err){ res.red(formatErr(err)); res.prompt(); return  }
-      res.cyan(formatDocs(data.rows,' ')||'no documents');
+      res.cyan(formatDocs(data.rows,' ')+'\n'||'no documents');
       res.prompt();
     });
   } else {
@@ -243,7 +243,7 @@ app.cmd('echo :json > :id', 'Create a document', function(req, res, next) {
         res.prompt();
       });
     } catch(e) {
-      res.red("Invalid JSON - " + req.params.json+"\n"); 
+      res.red("Invalid JSON - " + req.params.json+'\n'); 
       res.prompt();   
     }
   } else {
@@ -263,7 +263,7 @@ app.cmd('echo :json', 'Create a document with auto-generated id', function(req, 
         res.prompt();
       });
     } catch(e) {
-      res.red("Invalid JSON - " + req.params.json+"\n"); 
+      res.red("Invalid JSON - " + req.params.json+'\n'); 
       res.prompt();   
     }
   } else {
@@ -316,7 +316,7 @@ app.cmd('tree :id', 'View the revision history of a document', function(req, res
           revslist[rev].push(revs[i]);
         }
       }
-      var output = "#id = " + req.params.id + "\n";
+      var output = "#id = " + req.params.id + '\n';
       for(var i in revslist) {
         var prefix = "##";
         if (revslist[i].length==1) {
@@ -324,17 +324,17 @@ app.cmd('tree :id', 'View the revision history of a document', function(req, res
            if(revslist[i][0] == data._rev) {
              output += " *"
            }
-          output += "\n";
+          output += '\n';
         } else {
           output += prefix + revslist[i][0].match(/^[0-9]+/)[0];
-          output += "\n";
+          output += '\n';
           prefix += "#";
           for(var j in revslist[i]) {
             output += prefix + revslist[i][j];
             if(revslist[i][j] == data._rev) {
               output  += " *"
             }
-            output += "\n";
+            output += '\n';
           }
         }
       }
@@ -363,7 +363,7 @@ app.cmd('head :db', 'Show first ten documents from a database', function(req, re
 
 app.cmd('pwd', 'Print working directory', function(req, res, next) {
   if (appsettings.cloudantdb) { 
-    res.cyan(appsettings.cloudantdbname + "\n");
+    res.cyan(appsettings.cloudantdbname + '\n');
     res.prompt();
   } else {
     res.cyan("/ \n");
