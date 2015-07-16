@@ -349,7 +349,7 @@ app.cmd('tree :id', 'View the revision history of a document', function(req, res
 
 app.cmd('head :db', 'Show first ten documents from a database', function(req, res, next) {
   if (appsettings.cloudantdb) { 
-    res.red("You cannot do 'head :id from the top level\n");
+    res.red("You cannot do 'head :id from the db level\n");
     res.prompt();
   } else {
     var d = app.client.db.use(req.params.db);
@@ -373,5 +373,5 @@ app.cmd('pwd', 'Print working directory', function(req, res, next) {
 
 // Event notification 
 app.on('quit', function(){
-  app.client.quit();
+  process.exit();
 });
