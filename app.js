@@ -1,12 +1,12 @@
 #!/usr/bin/env node
-var shell = require('shell');
-var url = require('url');
-var appsettings = { 
-  cloudantdb: null,
-  cloudantdbname: null
-};
-var completer = require('./completer.js');
-var asciitree = require('ascii-tree');
+var shell = require('shell'),
+ url = require('url'),
+ appsettings = { 
+   cloudantdb: null,
+   cloudantdbname: null
+ },
+ completer = require('./completer.js'),
+ asciitree = require('ascii-tree');
 
 if(!process.env.COUCH_URL) {
   console.log("Please specify the URL of your CouchDB instance by setting a COUCH_URL environment variable");
