@@ -21,6 +21,11 @@ Couchshell is a command-line shell utility that allows you to interact with a Co
 * rm - remove document
 * cp - copy a document or database
 * head - show first few documents from a database
+* touch - load and save a document
+* pwd - show the current database
+* tree - show revision history and conflicts from a document
+* du - show disk space usage of a database
+* fsck - remove conflicts from a document
 
 ## Installation
 
