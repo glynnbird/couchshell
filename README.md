@@ -272,7 +272,30 @@ We can delete all conflicting revisions from a document (other than the winning 
   id = mydoc
   └─ 1-f5401b77bb604d6f55c04a0e661f69d4 *
   
-All of the conflicting revisions are deleted in a single bulk operation. You see the response to the bulk operation.
+All of the conflicting revisions are deleted in a single bulk operation. You see the response to the bulk operation. 
+
+If we want to keep a specific revision (that is not current winning revision), then we can do `fsck <id> <rev>`:
+  
+    mydb >> tree mydoc
+    id = mydoc
+    └─ 1
+       ├─ 1-16d5fd150971e97f6adec5e17f515594
+       ├─ 1-2d9097166eeaeffc5ae70346fea0b988
+       ├─ 1-32616223ff8de17ee8a1afbcccc05e8e
+       ├─ 1-36602b53bf2918b393b1bef3c7648767
+       ├─ 1-49dedfaefc6f706b609bc75958499a13
+       ├─ 1-94ec1c1571a5b00a5f0bf4121af1ddef
+       ├─ 1-9e9b49aff3c1b99dcfa01e6292053aa9
+       ├─ 1-a3eefcfb591f999b87284663a287d3b9
+       ├─ 1-a7f639949923d35e26974b3b81522116
+       └─ 1-a8f68832e5dd0acc1d24d099dceea335 *
+    mydb >> fsck mydoc 1-999
+    The revision 1-999 does not exist in the document.
+    mydb >> fsck mydoc 1-a7f639949923d35e26974b3b81522116    [{"ok":true,"id":"mydoc","rev":"2-a10f20dc2f70275e85c36305086e0ce8"},{"ok":true,"id":"mydoc","rev":"2-5ab18477afda68b7320e490113d35e74"},{"ok":true,"id":"mydoc","rev":"2-ef061a6709fa93bbc92f07277b81990a"},{"ok":true,"id":"mydoc","rev":"2-8ad6479190c7144359198ac216215ef3"},{"ok":true,"id":"mydoc","rev":"2-c6ca34d99535e5c451752adae33a0336"},{"ok":true,"id":"mydoc","rev":"2-e5aa1fb11293c85c0f84d23e4a0c6ae0"},{"ok":true,"id":"mydoc","rev":"2-875565098342b16627e54b7cd6044818"},{"ok":true,"id":"mydoc","rev":"2-4b432cb9348e2e07c9165d10dbdb1139"},{"ok":true,"id":"mydoc","rev":"2-b9fbc1a19742fac04d1d98db95fb7b43"}]
+    mydb >> tree mydoc
+    id = mydoc
+    └─ 1-a7f639949923d35e26974b3b81522116 *
+    mydb >> 
 
 ## Showing the disk usage of a database
 

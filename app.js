@@ -392,6 +392,49 @@ app.cmd('du', 'Disk usage of a database', function(req, res, next) {
   }
 });
 
+app.cmd('fsck :id :rev', 'Repair document (remove conflicts) by defining a winning revision', function(req, res, next) {
+  if (appsettings.cloudantdb) { 
+    appsettings.cloudantdb.get(req.params.id, { conflicts:true, revs_info:true}, function(err, data) {
+      if(err){ res.red(formatErr(err)); res.prompt(); return  }
+      if (!data._conflicts) {
+        res.red("No conflicts found.\n"); 
+        res.prompt(); 
+        return;
+      }
+      
+      // check that the proposed winner is one of the existing conflicts
+      if (data._conflicts.indexOf(req.params.rev) == -1) {
+        res.red("The revision " + req.params.rev + " does not exist in the document.\n"); 
+        res.prompt(); 
+        return;
+      }
+      
+      // delete all conflics, leaving the nominated revision as the uncontested winner
+      var deletions = [];
+      for (var i in data._conflicts) {
+        if (data._conflicts[i] != req.params.rev) {
+          deletions.push({ _id: req.params.id, _rev: data._conflicts[i], _deleted: true});
+        }
+      }
+      
+      // delete the current winner if required
+      if (data._rev != req.params.rev) {
+        deletions.push({ _id: req.params.id, _rev: data._rev, _deleted: true});       
+      }
+      
+      // perform bulk operation
+      appsettings.cloudantdb.bulk({docs: deletions}, function(err, data) {
+        if(err){ res.red(formatErr(err)); res.prompt(); return  }
+        res.cyan(JSON.stringify(data) + '\n');
+        res.prompt();
+      });
+    });
+  } else {
+    res.red("You cannot do 'fsck :id' from the top level.\n");
+    res.prompt();
+  }
+});
+
 app.cmd('fsck :id', 'Repair document (remove conflicts)', function(req, res, next) {
   if (appsettings.cloudantdb) { 
     appsettings.cloudantdb.get(req.params.id, { conflicts:true, revs_info:true}, function(err, data) {
@@ -404,7 +447,7 @@ app.cmd('fsck :id', 'Repair document (remove conflicts)', function(req, res, nex
       // delete all conflics, leaving the winning revision as the uncontested winner
       var deletions = [];
       for(var i in data._conflicts) {
-        deletions.push({ _id: req.params.id, _rev: data._conflicts[i], _deleted: true})
+        deletions.push({ _id: req.params.id, _rev: data._conflicts[i], _deleted: true});
       }
       appsettings.cloudantdb.bulk({docs: deletions}, function(err, data) {
         if(err){ res.red(formatErr(err)); res.prompt(); return  }
@@ -417,6 +460,10 @@ app.cmd('fsck :id', 'Repair document (remove conflicts)', function(req, res, nex
     res.prompt();
   }
 });
+
+
+
+
 
 // Event notification 
 app.on('quit', function(){
