@@ -296,7 +296,8 @@ If we want to keep a specific revision (that is not current winning revision), t
        └─ 1-a8f68832e5dd0acc1d24d099dceea335 *
     mydb >> fsck mydoc 1-999
     The revision 1-999 does not exist in the document.
-    mydb >> fsck mydoc 1-a7f639949923d35e26974b3b81522116    [{"ok":true,"id":"mydoc","rev":"2-a10f20dc2f70275e85c36305086e0ce8"},{"ok":true,"id":"mydoc","rev":"2-5ab18477afda68b7320e490113d35e74"},{"ok":true,"id":"mydoc","rev":"2-ef061a6709fa93bbc92f07277b81990a"},{"ok":true,"id":"mydoc","rev":"2-8ad6479190c7144359198ac216215ef3"},{"ok":true,"id":"mydoc","rev":"2-c6ca34d99535e5c451752adae33a0336"},{"ok":true,"id":"mydoc","rev":"2-e5aa1fb11293c85c0f84d23e4a0c6ae0"},{"ok":true,"id":"mydoc","rev":"2-875565098342b16627e54b7cd6044818"},{"ok":true,"id":"mydoc","rev":"2-4b432cb9348e2e07c9165d10dbdb1139"},{"ok":true,"id":"mydoc","rev":"2-b9fbc1a19742fac04d1d98db95fb7b43"}]
+    mydb >> fsck mydoc 1-a7f639949923d35e26974b3b81522116
+    [{"ok":true,"id":"mydoc","rev":"2-a10f20dc2f70275e85c36305086e0ce8"},{"ok":true,"id":"mydoc","rev":"2-5ab18477afda68b7320e490113d35e74"},{"ok":true,"id":"mydoc","rev":"2-ef061a6709fa93bbc92f07277b81990a"},{"ok":true,"id":"mydoc","rev":"2-8ad6479190c7144359198ac216215ef3"},{"ok":true,"id":"mydoc","rev":"2-c6ca34d99535e5c451752adae33a0336"},{"ok":true,"id":"mydoc","rev":"2-e5aa1fb11293c85c0f84d23e4a0c6ae0"},{"ok":true,"id":"mydoc","rev":"2-875565098342b16627e54b7cd6044818"},{"ok":true,"id":"mydoc","rev":"2-4b432cb9348e2e07c9165d10dbdb1139"},{"ok":true,"id":"mydoc","rev":"2-b9fbc1a19742fac04d1d98db95fb7b43"}]
     mydb >> tree mydoc
     id = mydoc
     └─ 1-a7f639949923d35e26974b3b81522116 *
