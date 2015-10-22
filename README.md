@@ -259,23 +259,23 @@ The winning revision is marked with an asterisk.
 
 We can delete all conflicting revisions from a document (other than the winning revision) using `fsck <id>`:
   
-  mydb >> tree mydoc
-  id = mydoc
-  └─ 1
-     ├─ 1-1a0f63dc5b1e38a31c3a42dbb4afe3db
-     ├─ 1-5eb7c1177ad06bf192c3dacf776cf3d3
-     ├─ 1-7c1dafbec62feefc2f0e875aea2f6093
-     ├─ 1-94ec1c1571a5b00a5f0bf4121af1ddef
-     ├─ 1-95630339bde96adda2be19207c4772c8
-     ├─ 1-9d1d7a18212c0c74369208e4aef7fa13
-     ├─ 1-d2701441808e0caee7c394d77fbe7550
-     ├─ 1-da86decbdae0ef60ad41c33c12870860
-     ├─ 1-e91608e02ae31b5c6085d5ca17d964e2
-     └─ 1-f5401b77bb604d6f55c04a0e661f69d4 *
-  mydb >> fsck mydoc [{"ok":true,"id":"mydoc","rev":"2-96d4749bff11e619f31c3918671ec072"},{"ok":true,"id":"mydoc","rev":"2-0720b0ca56a1918feb5fac5bc0f5f7f6"},{"ok":true,"id":"mydoc","rev":"2-41e157d902abb4a9a84e8fcd905b17da"},{"ok":true,"id":"mydoc","rev":"2-421cc57d13e5f922fcc91f52e0884d3b"},{"ok":true,"id":"mydoc","rev":"2-da7d32f6a0201bf1509632d0f4b58359"},{"ok":true,"id":"mydoc","rev":"2-ef061a6709fa93bbc92f07277b81990a"},{"ok":true,"id":"mydoc","rev":"2-558011a4162d26bdcec71166556627c6"},{"ok":true,"id":"mydoc","rev":"2-19ffd7f841ddf020b42151d17f0012cc"},{"ok":true,"id":"mydoc","rev":"2-4d8e91ebc73462334b69a76610264799"}]
-  mydb >> tree mydoc
-  id = mydoc
-  └─ 1-f5401b77bb604d6f55c04a0e661f69d4 *
+    mydb >> tree mydoc
+    id = mydoc
+    └─ 1
+       ├─ 1-1a0f63dc5b1e38a31c3a42dbb4afe3db
+       ├─ 1-5eb7c1177ad06bf192c3dacf776cf3d3
+       ├─ 1-7c1dafbec62feefc2f0e875aea2f6093
+       ├─ 1-94ec1c1571a5b00a5f0bf4121af1ddef
+       ├─ 1-95630339bde96adda2be19207c4772c8
+       ├─ 1-9d1d7a18212c0c74369208e4aef7fa13
+       ├─ 1-d2701441808e0caee7c394d77fbe7550
+       ├─ 1-da86decbdae0ef60ad41c33c12870860
+       ├─ 1-e91608e02ae31b5c6085d5ca17d964e2
+       └─ 1-f5401b77bb604d6f55c04a0e661f69d4 *
+    mydb >> fsck mydoc [{"ok":true,"id":"mydoc","rev":"2-96d4749bff11e619f31c3918671ec072"},{"ok":true,"id":"mydoc","rev":"2-0720b0ca56a1918feb5fac5bc0f5f7f6"},{"ok":true,"id":"mydoc","rev":"2-41e157d902abb4a9a84e8fcd905b17da"},{"ok":true,"id":"mydoc","rev":"2-421cc57d13e5f922fcc91f52e0884d3b"},{"ok":true,"id":"mydoc","rev":"2-da7d32f6a0201bf1509632d0f4b58359"},{"ok":true,"id":"mydoc","rev":"2-ef061a6709fa93bbc92f07277b81990a"},{"ok":true,"id":"mydoc","rev":"2-558011a4162d26bdcec71166556627c6"},{"ok":true,"id":"mydoc","rev":"2-19ffd7f841ddf020b42151d17f0012cc"},{"ok":true,"id":"mydoc","rev":"2-4d8e91ebc73462334b69a76610264799"}]
+    mydb >> tree mydoc
+    id = mydoc
+    └─ 1-f5401b77bb604d6f55c04a0e661f69d4 *
   
 All of the conflicting revisions are deleted in a single bulk operation. You see the response to the bulk operation. 
 
