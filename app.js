@@ -392,6 +392,32 @@ app.cmd('du', 'Disk usage of a database', function(req, res, next) {
   }
 });
 
+app.cmd('fsck :id', 'Repair document (remove conflicts)', function(req, res, next) {
+  if (appsettings.cloudantdb) { 
+    appsettings.cloudantdb.get(req.params.id, { conflicts:true, revs_info:true}, function(err, data) {
+      if(err){ res.red(formatErr(err)); res.prompt(); return  }
+      if (!data._conflicts) {
+        res.red("No conflicts found.\n"); 
+        res.prompt(); 
+        return;
+      }
+      // delete all conflics, leaving the winning revision as the uncontested winner
+      var deletions = [];
+      for(var i in data._conflicts) {
+        deletions.push({ _id: req.params.id, _rev: data._conflicts[i], _deleted: true})
+      }
+      appsettings.cloudantdb.bulk({docs: deletions}, function(err, data) {
+        if(err){ res.red(formatErr(err)); res.prompt(); return  }
+        res.cyan(JSON.stringify(data) + '\n');
+        res.prompt();
+      });
+    });
+  } else {
+    res.red("You cannot do 'fsck :id' from the top level.\n");
+    res.prompt();
+  }
+});
+
 // Event notification 
 app.on('quit', function(){
   process.exit();
