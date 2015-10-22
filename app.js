@@ -371,6 +371,27 @@ app.cmd('pwd', 'Print working directory', function(req, res, next) {
   }
 });
 
+app.cmd('du :db', 'Disk usage of a database', function(req, res, next) {
+  app.client.db.get(req.params.db, function(err, data) {
+    if(err){ res.red(formatErr(err)); res.prompt(); return  }
+    res.cyan(JSON.stringify(data) + '\n');
+    res.prompt();
+  });
+});
+
+app.cmd('du', 'Disk usage of a database', function(req, res, next) {
+  if (appsettings.cloudantdb) { 
+    app.client.db.get(appsettings.cloudantdbname, function(err, data) {
+      if(err){ res.red(formatErr(err)); res.prompt(); return  }
+      res.cyan(JSON.stringify(data) + '\n');
+      res.prompt();
+    });
+  } else {
+    res.red("You cannot do 'du' from the top level. Try 'du <dbname>'\n");
+    res.prompt();
+  }
+});
+
 // Event notification 
 app.on('quit', function(){
   process.exit();

@@ -250,6 +250,17 @@ And a more complicated revision history may look like this:
    
 The winning revision is marked with an asterisk.
 
+## Showing the disk usage of a database
+
+When at the top level, we can show the statistics of a database using `du <dbname>`:
+
+    >> du ebooks    {"db_name":"ebooks","doc_count":41,"doc_del_count":0,"update_seq":41,"purge_seq":0,"compact_running":false,"disk_size":163944,"data_size":13856,"instance_start_time":"1445498614131939","disk_format_version":6,"committed_update_seq":41}
+
+Similarly if we are inside a database, we can simply use `du`:
+
+    >> cd ebooks
+    ebooks >> du {"db_name":"ebooks","doc_count":41,"doc_del_count":0,"update_seq":41,"purge_seq":0,"compact_running":false,"disk_size":163944,"data_size":13856,"instance_start_time":"1445498614131939","disk_format_version":6,"committed_update_seq":41}
+
 ## Todo
 
 * force rmdir to require confirmation before deleting a database
