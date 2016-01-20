@@ -4,7 +4,7 @@
   "description": "A shell to interact with CouchDB as if it were a file system",
   "dependencies": {
     "ascii-tree": "0.3.0",
-    "cloudant": "1.3.0",
+    "cloudant": "1.4.1",
     "shell": "0.3.2"
   },
   "repository": "https://github.com/glynnbird/couchshell.git",
