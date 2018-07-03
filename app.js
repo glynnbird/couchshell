@@ -18,7 +18,7 @@ var app = new shell( { chdir: __dirname } )
 // Middleware registration 
 app.configure(function() {
   app.use(function(req, res, next){ 
-    app.client = require('cloudant')(process.env.COUCH_URL);
+    app.client = require('@cloudant/cloudant')(process.env.COUCH_URL);
     next()
   });
   app.use(shell.history({
@@ -66,7 +66,6 @@ var convertToURL = function(x) {
 app.cmd('ls', 'List dbs/documents', function(req, res, next){
   if (appsettings.cloudantdb) {
     appsettings.cloudantdb.list( { limit: 10 }, function(err, data){
-      console.log(err,data);
       if(err){ res.cyan(formatErr(err)); res.prompt(); return  }
       res.cyan(formatDocs(data.rows, ' ')+'\n'||'no documents');
       res.prompt();
@@ -460,10 +459,6 @@ app.cmd('fsck :id', 'Repair document (remove conflicts)', function(req, res, nex
     res.prompt();
   }
 });
-
-
-
-
 
 // Event notification 
 app.on('quit', function(){

@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "description": "A shell to interact with CouchDB as if it were a file system",
   "dependencies": {
+    "@cloudant/cloudant": "^2.3.0",
     "ascii-tree": "0.3.0",
-    "cloudant": "1.3.0",
-    "shell": "0.3.2"
+    "shell": "https://github.com/adaltas/node-shell.git"
   },
   "repository": "https://github.com/glynnbird/couchshell.git",
   "keywords": [
@@ -15,7 +15,7 @@
     "command-line"
   ],
   "author": "Glynn Bird",
-  "license": "BSD",
+  "license": "Apache-2.0",
   "bin": {
     "couchshell": "app.js"
   }

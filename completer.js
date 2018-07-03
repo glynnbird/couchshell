@@ -24,7 +24,7 @@ module.exports = (settings) ->
 */       
 
 var longestCommonPrefix = require('./longest-common-prefix');
-var nano = require('cloudant');
+var nano = require('@cloudant/cloudant');
 
 function processSuggestions(suggestions, startkey, text, cb) {
   if(suggestions.length) {
