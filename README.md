@@ -258,50 +258,54 @@ The winning revision is marked with an asterisk.
 ## Removing conflicts from a document
 
 We can delete all conflicting revisions from a document (other than the winning revision) using `fsck <id>`:
-  
-    mydb >> tree mydoc
-    id = mydoc
-    └─ 1
-       ├─ 1-1a0f63dc5b1e38a31c3a42dbb4afe3db
-       ├─ 1-5eb7c1177ad06bf192c3dacf776cf3d3
-       ├─ 1-7c1dafbec62feefc2f0e875aea2f6093
-       ├─ 1-94ec1c1571a5b00a5f0bf4121af1ddef
-       ├─ 1-95630339bde96adda2be19207c4772c8
-       ├─ 1-9d1d7a18212c0c74369208e4aef7fa13
-       ├─ 1-d2701441808e0caee7c394d77fbe7550
-       ├─ 1-da86decbdae0ef60ad41c33c12870860
-       ├─ 1-e91608e02ae31b5c6085d5ca17d964e2
-       └─ 1-f5401b77bb604d6f55c04a0e661f69d4 *
-    mydb >> fsck mydoc [{"ok":true,"id":"mydoc","rev":"2-96d4749bff11e619f31c3918671ec072"},{"ok":true,"id":"mydoc","rev":"2-0720b0ca56a1918feb5fac5bc0f5f7f6"},{"ok":true,"id":"mydoc","rev":"2-41e157d902abb4a9a84e8fcd905b17da"},{"ok":true,"id":"mydoc","rev":"2-421cc57d13e5f922fcc91f52e0884d3b"},{"ok":true,"id":"mydoc","rev":"2-da7d32f6a0201bf1509632d0f4b58359"},{"ok":true,"id":"mydoc","rev":"2-ef061a6709fa93bbc92f07277b81990a"},{"ok":true,"id":"mydoc","rev":"2-558011a4162d26bdcec71166556627c6"},{"ok":true,"id":"mydoc","rev":"2-19ffd7f841ddf020b42151d17f0012cc"},{"ok":true,"id":"mydoc","rev":"2-4d8e91ebc73462334b69a76610264799"}]
-    mydb >> tree mydoc
-    id = mydoc
+
+```
+mydb >> tree mydoc
+id = mydoc
+└─ 1
+    ├─ 1-1a0f63dc5b1e38a31c3a42dbb4afe3db
+    ├─ 1-5eb7c1177ad06bf192c3dacf776cf3d3
+    ├─ 1-7c1dafbec62feefc2f0e875aea2f6093
+    ├─ 1-94ec1c1571a5b00a5f0bf4121af1ddef
+    ├─ 1-95630339bde96adda2be19207c4772c8
+    ├─ 1-9d1d7a18212c0c74369208e4aef7fa13
+    ├─ 1-d2701441808e0caee7c394d77fbe7550
+    ├─ 1-da86decbdae0ef60ad41c33c12870860
+    ├─ 1-e91608e02ae31b5c6085d5ca17d964e2
     └─ 1-f5401b77bb604d6f55c04a0e661f69d4 *
-  
+mydb >> fsck mydoc [{"ok":true,"id":"mydoc","rev":"2-96d4749bff11e619f31c3918671ec072"},{"ok":true,"id":"mydoc","rev":"2-0720b0ca56a1918feb5fac5bc0f5f7f6"},{"ok":true,"id":"mydoc","rev":"2-41e157d902abb4a9a84e8fcd905b17da"},{"ok":true,"id":"mydoc","rev":"2-421cc57d13e5f922fcc91f52e0884d3b"},{"ok":true,"id":"mydoc","rev":"2-da7d32f6a0201bf1509632d0f4b58359"},{"ok":true,"id":"mydoc","rev":"2-ef061a6709fa93bbc92f07277b81990a"},{"ok":true,"id":"mydoc","rev":"2-558011a4162d26bdcec71166556627c6"},{"ok":true,"id":"mydoc","rev":"2-19ffd7f841ddf020b42151d17f0012cc"},{"ok":true,"id":"mydoc","rev":"2-4d8e91ebc73462334b69a76610264799"}]
+mydb >> tree mydoc
+id = mydoc
+└─ 1-f5401b77bb604d6f55c04a0e661f69d4 *
+```
+
 All of the conflicting revisions are deleted in a single bulk operation. You see the response to the bulk operation. 
 
 If we want to keep a specific revision (that is not current winning revision), then we can do `fsck <id> <rev>`:
-  
-    mydb >> tree mydoc
-    id = mydoc
-    └─ 1
-       ├─ 1-16d5fd150971e97f6adec5e17f515594
-       ├─ 1-2d9097166eeaeffc5ae70346fea0b988
-       ├─ 1-32616223ff8de17ee8a1afbcccc05e8e
-       ├─ 1-36602b53bf2918b393b1bef3c7648767
-       ├─ 1-49dedfaefc6f706b609bc75958499a13
-       ├─ 1-94ec1c1571a5b00a5f0bf4121af1ddef
-       ├─ 1-9e9b49aff3c1b99dcfa01e6292053aa9
-       ├─ 1-a3eefcfb591f999b87284663a287d3b9
-       ├─ 1-a7f639949923d35e26974b3b81522116
-       └─ 1-a8f68832e5dd0acc1d24d099dceea335 *
-    mydb >> fsck mydoc 1-999
-    The revision 1-999 does not exist in the document.
-    mydb >> fsck mydoc 1-a7f639949923d35e26974b3b81522116
-    [{"ok":true,"id":"mydoc","rev":"2-a10f20dc2f70275e85c36305086e0ce8"},{"ok":true,"id":"mydoc","rev":"2-5ab18477afda68b7320e490113d35e74"},{"ok":true,"id":"mydoc","rev":"2-ef061a6709fa93bbc92f07277b81990a"},{"ok":true,"id":"mydoc","rev":"2-8ad6479190c7144359198ac216215ef3"},{"ok":true,"id":"mydoc","rev":"2-c6ca34d99535e5c451752adae33a0336"},{"ok":true,"id":"mydoc","rev":"2-e5aa1fb11293c85c0f84d23e4a0c6ae0"},{"ok":true,"id":"mydoc","rev":"2-875565098342b16627e54b7cd6044818"},{"ok":true,"id":"mydoc","rev":"2-4b432cb9348e2e07c9165d10dbdb1139"},{"ok":true,"id":"mydoc","rev":"2-b9fbc1a19742fac04d1d98db95fb7b43"}]
-    mydb >> tree mydoc
-    id = mydoc
-    └─ 1-a7f639949923d35e26974b3b81522116 *
-    mydb >> 
+
+```
+mydb >> tree mydoc
+id = mydoc
+└─ 1
+    ├─ 1-16d5fd150971e97f6adec5e17f515594
+    ├─ 1-2d9097166eeaeffc5ae70346fea0b988
+    ├─ 1-32616223ff8de17ee8a1afbcccc05e8e
+    ├─ 1-36602b53bf2918b393b1bef3c7648767
+    ├─ 1-49dedfaefc6f706b609bc75958499a13
+    ├─ 1-94ec1c1571a5b00a5f0bf4121af1ddef
+    ├─ 1-9e9b49aff3c1b99dcfa01e6292053aa9
+    ├─ 1-a3eefcfb591f999b87284663a287d3b9
+    ├─ 1-a7f639949923d35e26974b3b81522116
+    └─ 1-a8f68832e5dd0acc1d24d099dceea335 *
+mydb >> fsck mydoc 1-999
+The revision 1-999 does not exist in the document.
+mydb >> fsck mydoc 1-a7f639949923d35e26974b3b81522116
+[{"ok":true,"id":"mydoc","rev":"2-a10f20dc2f70275e85c36305086e0ce8"},{"ok":true,"id":"mydoc","rev":"2-5ab18477afda68b7320e490113d35e74"},{"ok":true,"id":"mydoc","rev":"2-ef061a6709fa93bbc92f07277b81990a"},{"ok":true,"id":"mydoc","rev":"2-8ad6479190c7144359198ac216215ef3"},{"ok":true,"id":"mydoc","rev":"2-c6ca34d99535e5c451752adae33a0336"},{"ok":true,"id":"mydoc","rev":"2-e5aa1fb11293c85c0f84d23e4a0c6ae0"},{"ok":true,"id":"mydoc","rev":"2-875565098342b16627e54b7cd6044818"},{"ok":true,"id":"mydoc","rev":"2-4b432cb9348e2e07c9165d10dbdb1139"},{"ok":true,"id":"mydoc","rev":"2-b9fbc1a19742fac04d1d98db95fb7b43"}]
+mydb >> tree mydoc
+id = mydoc
+└─ 1-a7f639949923d35e26974b3b81522116 *
+mydb >> 
+```
 
 ## Showing the disk usage of a database
 
