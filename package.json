@@ -1,11 +1,17 @@
 {
   "name": "couchshell",
-  "version": "1.0.2",
+  "version": "1.1.0",
   "description": "A shell to interact with CouchDB as if it were a file system",
+  "scripts": {
+    "standard": "standard --fix",
+    "run": "node app.js",
+    "test": "standard"
+  },
   "dependencies": {
     "@cloudant/cloudant": "^2.3.0",
     "ascii-tree": "0.3.0",
-    "shell": "https://github.com/adaltas/node-shell.git"
+    "nano": "^7.1.1",
+    "shell": "https://github.com/glynnbird/node-shell.git"
   },
   "repository": "https://github.com/glynnbird/couchshell.git",
   "keywords": [
@@ -18,5 +24,8 @@
   "license": "Apache-2.0",
   "bin": {
     "couchshell": "app.js"
+  },
+  "devDependencies": {
+    "standard": "^12.0.1"
   }
 }
