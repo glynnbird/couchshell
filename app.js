@@ -33,7 +33,6 @@ app.configure(function () {
       app.client = require('nano')(opts)
       next()
     })
-
   })
   app.use(Shell.history({
     shell: app
@@ -66,7 +65,7 @@ var formatDocs = function (docs, separator) {
 
 // convert a database name to a URL, if it isn't already
 var convertToURL = function (x) {
-  var parsed = url.parse(x)
+  var parsed = new url.URL(x)
   // if it is a URL already
   if (parsed.protocol) {
     return parsed.href
