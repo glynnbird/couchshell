@@ -41,6 +41,13 @@ or
 
     export COUCH_URL=https://myusername:mypassword@myhost.cloudant.com
 
+### IAM Authentication
+
+Alternatively, if you are using IAM authentication with IBM Cloudant, then supply two environment variables:
+
+- `COUCH_URL` - the URL of your Cloudant host e.g. `https://myhost.cloudant.com` (note absence of username and password in URL).
+- `IAM_API_KEY` - the IAM API KEY e.g. `ABC123515-151215`.
+
 ## Starting couchshell
 
     $ couchshell

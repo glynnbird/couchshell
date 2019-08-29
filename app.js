@@ -18,12 +18,21 @@ if (!process.env.COUCH_URL) {
 }
 
 // Initialization
+var iam = require('./iam.js')
 var app = new Shell({ chdir: __dirname })
 // Middleware registration
 app.configure(function () {
   app.use(function (req, res, next) {
-    app.client = require('nano')(process.env.COUCH_URL)
-    next()
+    iam.getToken(process.env.IAM_API_KEY).then((t) => {
+      const opts = {
+        url: process.env.COUCH_URL
+      }
+      if (t) {
+        opts.defaultHeaders = { Authorization: 'Bearer ' + t }
+      }
+      app.client = require('nano')(opts)
+      next()
+    })
   })
   app.use(Shell.history({
     shell: app
@@ -56,7 +65,7 @@ var formatDocs = function (docs, separator) {
 
 // convert a database name to a URL, if it isn't already
 var convertToURL = function (x) {
-  var parsed = url.parse(x)
+  var parsed = new url.URL(x)
   // if it is a URL already
   if (parsed.protocol) {
     return parsed.href
