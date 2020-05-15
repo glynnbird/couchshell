@@ -65,11 +65,11 @@ var formatDocs = function (docs, separator) {
 
 // convert a database name to a URL, if it isn't already
 var convertToURL = function (x) {
-  var parsed = new url.URL(x)
-  // if it is a URL already
-  if (parsed.protocol) {
+  try {
+    // if it is a URL already
+    var parsed = new url.URL(x)
     return parsed.href
-  } else {
+  } catch (error) {
     return process.env.COUCH_URL + '/' + encodeURIComponent(x)
   }
 }
@@ -199,21 +199,18 @@ app.cmd('cp :sourceid :destinationid', 'Copy a document/database', function (req
     })
   } else {
     // when at the top level, trigger replication
-    var repl = {
-      source: convertToURL(req.params.sourceid),
-      target: convertToURL(req.params.destinationid),
-      create_target: true
-    }
-    var r = {
-      db: '_replicator',
-      body: repl,
-      method: 'post'
-    }
-    app.client.request(r).then((data) => {
+    var startedtimeout = setTimeout(() => {
       res.cyan('Replication scheduled:\n')
-      res.cyan(JSON.stringify(data) + '\n')
+      res.cyan(req.params.sourceid + ' > ' + req.params.destinationid + '\n')
       res.prompt()
-    }).catch((err) => {
+    }, 3000);
+
+    app.client.db.replicate(
+      req.params.sourceid,
+      req.params.destinationid,
+      { create_target:true }
+    ).catch((err) => {
+      clearTimeout(startedtimeout);
       res.red(formatErr(err))
       res.prompt()
     })
