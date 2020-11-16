@@ -65,11 +65,10 @@ const formatDocs = function (docs, separator) {
 
 // convert a database name to a URL, if it isn't already
 const convertToURL = function (x) {
-  const parsed = new url.URL(x)
-  // if it is a URL already
-  if (parsed.protocol) {
+  try {
+    const parsed = new url.URL(x)
     return parsed.href
-  } else {
+  } catch (e) {
     return process.env.COUCH_URL + '/' + encodeURIComponent(x)
   }
 }
