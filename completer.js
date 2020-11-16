@@ -23,12 +23,12 @@ module.exports = (settings) ->
   null
 */
 
-var longestCommonPrefix = require('./longest-common-prefix')
-var nano = require('@cloudant/cloudant')
+const longestCommonPrefix = require('./longest-common-prefix')
+const nano = require('nano')
 
 function processSuggestions (suggestions, startkey, text, cb) {
   if (suggestions.length) {
-    var prefix = longestCommonPrefix(suggestions).substring(startkey.length)
+    const prefix = longestCommonPrefix(suggestions).substring(startkey.length)
 
     if (prefix.length) { // one common prefix, so complete it
       suggestions = [text + prefix]
@@ -44,21 +44,21 @@ module.exports = function (settings) {
   if (!settings.appsettings) {
     throw new Error('No appsettings provided')
   }
-  var shell = settings.shell
-  var appsettings = settings.appsettings
+  const shell = settings.shell
+  const appsettings = settings.appsettings
   if (!shell.isShell) {
     return
   }
   shell.interface().completer = function (text, cb) {
     // first let's see if the command has spaces in
-    var bits = text.split(' ')
+    const bits = text.split(' ')
 
     // if we have no space, then we haven't finished typing the command - so we want command auto-completion
     if (bits.length === 1) {
-      var suggestions = []
-      var routes = shell.routes
-      for (var i in routes) {
-        var command = routes[i].command
+      const suggestions = []
+      const routes = shell.routes
+      for (const i in routes) {
+        const command = routes[i].command
         if (command.substr(0, text.length) === text) {
           suggestions.push(command)
         }
@@ -74,8 +74,10 @@ module.exports = function (settings) {
           startkey: startkey,
           endkey: startkey + '\uffff'
         }, function (err, data) {
-          if (err) {}
-          var suggestions = data.rows.map(function (row) {
+          if (err) {
+            // handle error
+          }
+          const suggestions = data.rows.map(function (row) {
             return row.id
           })
           processSuggestions(suggestions, startkey, text, cb)
@@ -86,8 +88,10 @@ module.exports = function (settings) {
         nano(process.env.COUCH_URL).relax({
           db: '_all_dbs'
         }, function (err, data) {
-          if (err) {}
-          var suggestions = data.filter(function (db) {
+          if (err) {
+            // handle error
+          }
+          const suggestions = data.filter(function (db) {
             return db.indexOf(startkey) === 0
           })
           processSuggestions(suggestions, startkey, text, cb)

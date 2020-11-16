@@ -1,16 +1,16 @@
 #!/usr/bin/env node
-var Shell = require('shell')
+const Shell = require('shell')
 
-var url = require('url')
+const url = require('url')
 
-var appsettings = {
+const appsettings = {
   cloudantdb: null,
   cloudantdbname: null
 }
 
-var completer = require('./completer.js')
+const completer = require('./completer.js')
 
-var asciitree = require('ascii-tree')
+const asciitree = require('ascii-tree')
 
 if (!process.env.COUCH_URL) {
   console.log('Please specify the URL of your CouchDB instance by setting a COUCH_URL environment variable')
@@ -18,8 +18,8 @@ if (!process.env.COUCH_URL) {
 }
 
 // Initialization
-var iam = require('./iam.js')
-var app = new Shell({ chdir: __dirname })
+const iam = require('./iam.js')
+const app = new Shell({ chdir: __dirname })
 // Middleware registration
 app.configure(function () {
   app.use(function (req, res, next) {
@@ -50,22 +50,22 @@ app.configure(function () {
   }))
 })
 
-var formatErr = function (err) {
-  var retval = err.status_code + ': ' + err.description + '\n'
+const formatErr = function (err) {
+  const retval = err.status_code + ': ' + err.description + '\n'
   return retval
 }
 
-var formatDocs = function (docs, separator) {
-  var retval = []
-  for (var i in docs) {
+const formatDocs = function (docs, separator) {
+  const retval = []
+  for (const i in docs) {
     retval.push(docs[i].id)
   }
   return retval.join(separator) + '\n'
 }
 
 // convert a database name to a URL, if it isn't already
-var convertToURL = function (x) {
-  var parsed = new url.URL(x)
+const convertToURL = function (x) {
+  const parsed = new url.URL(x)
   // if it is a URL already
   if (parsed.protocol) {
     return parsed.href
@@ -199,12 +199,12 @@ app.cmd('cp :sourceid :destinationid', 'Copy a document/database', function (req
     })
   } else {
     // when at the top level, trigger replication
-    var repl = {
+    const repl = {
       source: convertToURL(req.params.sourceid),
       target: convertToURL(req.params.destinationid),
       create_target: true
     }
-    var r = {
+    const r = {
       db: '_replicator',
       body: repl,
       method: 'post'
@@ -273,8 +273,8 @@ app.cmd('cd :db', function (req, res, next) {
 app.cmd('echo :json > :id', 'Create a document', function (req, res, next) {
   if (appsettings.cloudantdb) {
     try {
-      var str = req.params.json.replace(/^'/, '').replace(/'$/, '')
-      var obj = JSON.parse(str)
+      const str = req.params.json.replace(/^'/, '').replace(/'$/, '')
+      const obj = JSON.parse(str)
       obj._id = req.params.id
       appsettings.cloudantdb.insert(obj).then((data) => {
         res.cyan(JSON.stringify(data) + '\n')
@@ -296,8 +296,8 @@ app.cmd('echo :json > :id', 'Create a document', function (req, res, next) {
 app.cmd('echo :json', 'Create a document with auto-generated id', function (req, res, next) {
   if (appsettings.cloudantdb) {
     try {
-      var str = req.params.json.replace(/^'/, '').replace(/'$/, '')
-      var obj = JSON.parse(str)
+      const str = req.params.json.replace(/^'/, '').replace(/'$/, '')
+      const obj = JSON.parse(str)
       appsettings.cloudantdb.insert(obj).then((data) => {
         res.cyan(JSON.stringify(data) + '\n')
         res.prompt()
@@ -340,7 +340,7 @@ app.cmd('touch :id', 'Create a new empty document, or change an existing one', f
 app.cmd('tree :id', 'View the revision history of a document', function (req, res, next) {
   if (appsettings.cloudantdb) {
     appsettings.cloudantdb.get(req.params.id, { conflicts: true, revs_info: true }).then((data) => {
-      var revs = []
+      let revs = []
       let i
       for (i in data._revs_info) {
         revs.push(data._revs_info[i].rev)
@@ -349,20 +349,20 @@ app.cmd('tree :id', 'View the revision history of a document', function (req, re
         revs.push(data._conflicts[i])
       }
       revs = revs.sort()
-      var revslist = { }
+      const revslist = { }
       for (i in revs) {
-        var match = revs[i].match(/^[0-9]+/)
+        const match = revs[i].match(/^[0-9]+/)
         if (match) {
-          var rev = match[0]
+          const rev = match[0]
           if (!revslist[rev]) {
             revslist[rev] = []
           }
           revslist[rev].push(revs[i])
         }
       }
-      var output = '#id = ' + req.params.id + '\n'
+      let output = '#id = ' + req.params.id + '\n'
       for (i in revslist) {
-        var prefix = '##'
+        let prefix = '##'
         if (revslist[i].length === 1) {
           output += prefix + revslist[i][0]
           if (revslist[i][0] === data._rev) {
@@ -373,7 +373,7 @@ app.cmd('tree :id', 'View the revision history of a document', function (req, re
           output += prefix + revslist[i][0].match(/^[0-9]+/)[0]
           output += '\n'
           prefix += '#'
-          for (var j in revslist[i]) {
+          for (const j in revslist[i]) {
             output += prefix + revslist[i][j]
             if (revslist[i][j] === data._rev) {
               output += ' *'
@@ -399,7 +399,7 @@ app.cmd('head :db', 'Show first ten documents from a database', function (req, r
     res.red("You cannot do 'head :id from the db level\n")
     res.prompt()
   } else {
-    var d = app.client.db.use(req.params.db)
+    const d = app.client.db.use(req.params.db)
     d.list({ limit: 10, include_docs: true }).then((data) => {
       res.cyan(JSON.stringify(data.rows) + '\n')
       res.prompt()
@@ -462,8 +462,8 @@ app.cmd('fsck :id :rev', 'Repair document (remove conflicts) by defining a winni
       }
 
       // delete all conflics, leaving the nominated revision as the uncontested winner
-      var deletions = []
-      for (var i in data._conflicts) {
+      const deletions = []
+      for (const i in data._conflicts) {
         if (data._conflicts[i] !== req.params.rev) {
           deletions.push({ _id: req.params.id, _rev: data._conflicts[i], _deleted: true })
         }
@@ -498,8 +498,8 @@ app.cmd('fsck :id', 'Repair document (remove conflicts)', function (req, res, ne
         return
       }
       // delete all conflics, leaving the winning revision as the uncontested winner
-      var deletions = []
-      for (var i in data._conflicts) {
+      const deletions = []
+      for (const i in data._conflicts) {
         deletions.push({ _id: req.params.id, _rev: data._conflicts[i], _deleted: true })
       }
       return appsettings.cloudantdb.bulk({ docs: deletions })

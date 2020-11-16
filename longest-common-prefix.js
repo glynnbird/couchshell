@@ -6,9 +6,9 @@ module.exports = function longestCommonPrefix (strings) {
     return ''
   }
 
-  var candidate = strings[0]
-  for (var i = 1; i < strings.length; i++) {
-    var str = strings[i]
+  let candidate = strings[0]
+  for (let i = 1; i < strings.length; i++) {
+    const str = strings[i]
     while (str.indexOf(candidate) !== 0 && candidate) {
       candidate = candidate.substring(0, candidate.length - 1)
     }
