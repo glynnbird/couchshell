@@ -24,7 +24,6 @@ module.exports = (settings) ->
 */
 
 const longestCommonPrefix = require('./longest-common-prefix')
-const nano = require('nano')
 
 function processSuggestions (suggestions, startkey, text, cb) {
   if (suggestions.length) {
@@ -49,7 +48,7 @@ module.exports = function (settings) {
   if (!shell.isShell) {
     return
   }
-  shell.interface().completer = function (text, cb) {
+  shell.interface().completer = async function (text, cb) {
     // first let's see if the command has spaces in
     const bits = text.split(' ')
 
@@ -85,17 +84,17 @@ module.exports = function (settings) {
       } else {
         // database/documentid autocompletion
         startkey = bits[bits.length - 1] || ''
-        nano(process.env.COUCH_URL).relax({
-          db: '_all_dbs'
-        }, function (err, data) {
-          if (err) {
-            // handle error
-          }
-          const suggestions = data.filter(function (db) {
+        try {
+          const dbs = await settings.nano.db.list()
+          const suggestions = dbs.filter(function (db) {
             return db.indexOf(startkey) === 0
           })
           processSuggestions(suggestions, startkey, text, cb)
-        })
+        } catch (e) {
+          console.log(e)
+          cb(null, [])
+          // do nothing
+        }
       }
     }
   }

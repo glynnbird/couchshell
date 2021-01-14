@@ -1,6 +1,6 @@
 {
   "name": "couchshell",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "description": "A shell to interact with CouchDB as if it were a file system",
   "scripts": {
     "standard": "standard --fix",
@@ -9,8 +9,8 @@
   },
   "dependencies": {
     "ascii-tree": "0.3.0",
-    "ccurllib": "^1.0.5",
-    "nano": "^9.0.1",
+    "ccurllib": "^1.1.1",
+    "nano": "^9.0.2",
     "shell": "https://github.com/glynnbird/node-shell.git"
   },
   "repository": "https://github.com/glynnbird/couchshell.git",
