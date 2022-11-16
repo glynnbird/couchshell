@@ -1,6 +1,6 @@
 {
   "name": "couchshell",
-  "version": "1.2.4",
+  "version": "1.2.5",
   "description": "A shell to interact with CouchDB as if it were a file system",
   "scripts": {
     "standard": "standard --fix",
