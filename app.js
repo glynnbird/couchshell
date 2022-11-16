@@ -51,8 +51,8 @@ const main = async () => {
     }))
     app.use(completer({
       shell: app,
-      appsettings: appsettings,
-      nano: nano
+      appsettings,
+      nano
     }))
     app.use(Shell.router({
       shell: app

@@ -70,7 +70,7 @@ module.exports = function (settings) {
         startkey = bits[bits.length - 1] || ''
         appsettings.cloudantdb.list({
           limit: 10,
-          startkey: startkey,
+          startkey,
           endkey: startkey + '\uffff'
         }, function (err, data) {
           if (err) {
